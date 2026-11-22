@@ -5,9 +5,8 @@ import { Search, X } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobCard } from "@/components/app/JobCard";
-import { CITIES, LOOKING_FOR, ROLE_TYPES, WORK_MODES, timeAgo } from "@/lib/domain";
+import { CITIES, LOOKING_FOR, timeAgo } from "@/lib/domain";
 import { filterJobs, jobsQuery } from "@/lib/queries";
 
 const searchSchema = z.object({
@@ -39,7 +38,6 @@ export const Route = createFileRoute("/jobs/")({
   component: JobSearch,
 });
 
-const ALL = "__all";
 
 function JobSearch() {
   const search = Route.useSearch();
@@ -52,10 +50,6 @@ function JobSearch() {
     navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
   const results = useMemo(() => filterJobs(jobs, search), [jobs, search]);
-  const companies = useMemo(
-    () => [...new Map(jobs.map((j) => [j.company?.slug, j.company?.name])).entries()].filter(([s]) => s) as [string, string][],
-    [jobs],
-  );
   const lastUpdated = jobs.reduce((m, j) => (j.last_seen_at > m ? j.last_seen_at : m), "");
   const active = Object.entries(search).filter(([k, v]) => v && k !== "sort").length;
 
@@ -86,14 +80,6 @@ function JobSearch() {
         {CITIES.map((c) => (
           <Chip key={c.key} subtle active={search.city === c.key} onClick={() => set({ city: search.city === c.key ? undefined : c.key })}>{c.label}</Chip>
         ))}
-      </div>
-
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-        <FilterSelect placeholder="Role type" value={search.role} onChange={(v) => set({ role: v })} options={ROLE_TYPES.map((r) => [r, r])} />
-        <FilterSelect placeholder="Work mode" value={search.mode} onChange={(v) => set({ mode: v })} options={WORK_MODES.map((m) => [m.key, m.label])} />
-        <FilterSelect placeholder="Company" value={search.company} onChange={(v) => set({ company: v })} options={companies} />
-        <FilterSelect placeholder="Skill" value={search.skill} onChange={(v) => set({ skill: v })} options={[...new Set(jobs.flatMap((j) => j.required_skills))].sort().map((s) => [s, s])} />
-        <FilterSelect placeholder="Sort" value={search.sort} onChange={(v) => set({ sort: v as "newest" | undefined })} options={[["newest", "Newest"]]} allLabel="Newest" />
       </div>
 
       <div className="mt-5 flex items-center justify-between text-sm">
@@ -131,14 +117,3 @@ function Chip({ active, subtle, onClick, children }: { active: boolean; subtle?:
   );
 }
 
-function FilterSelect({ placeholder, value, onChange, options, allLabel }: { placeholder: string; value: string | undefined; onChange: (v: string | undefined) => void; options: [string, string][]; allLabel?: string }) {
-  return (
-    <Select value={value ?? ""} onValueChange={(v) => onChange(v === ALL ? undefined : v)}>
-      <SelectTrigger className="w-full bg-card"><SelectValue placeholder={placeholder} /></SelectTrigger>
-      <SelectContent>
-        <SelectItem value={ALL}>{allLabel ?? `Any ${placeholder.toLowerCase()}`}</SelectItem>
-        {options.map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}
-      </SelectContent>
-    </Select>
-  );
-}

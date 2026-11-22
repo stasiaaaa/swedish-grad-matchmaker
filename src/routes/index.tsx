@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Search, GraduationCap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CITIES, LOOKING_FOR, ROLE_TYPES } from "@/lib/domain";
+import { CITIES, LOOKING_FOR } from "@/lib/domain";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,14 +61,6 @@ function Landing() {
             <Link key={l.key} to="/jobs" search={{ lf: l.key }} className={`group rounded-2xl border p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift ${i === 0 ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>
               <p className="font-display text-lg font-bold leading-tight">{l.label}</p>
               <ArrowRight className="mt-4 size-4 transition group-hover:translate-x-1" />
-            </Link>
-          ))}
-        </div>
-        <h2 className="mt-12 text-2xl font-bold">Browse by role</h2>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {ROLE_TYPES.map((r) => (
-            <Link key={r} to="/jobs" search={{ role: r }} className="rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium hover:border-primary hover:text-primary">
-              {r}
             </Link>
           ))}
         </div>
