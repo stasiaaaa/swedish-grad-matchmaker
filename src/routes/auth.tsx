@@ -62,10 +62,17 @@ function AuthPage() {
         email, password,
         options: { emailRedirectTo: window.location.origin + "/auth", data: { account_type: type, full_name: name } },
       });
-      if (error) toast.error(error.message); else setSent(true);
+      if (error) {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) toast.error(error.message);
+      } else setSent(true);
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) toast.error(error.message);
+      if (error) {
+        // A confirmation link opened in another tab may already have signed the user in.
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) toast.error(error.message === "Email not confirmed" ? "Please confirm your email first. Check your inbox for the link." : error.message);
+      }
     }
     setBusy(false);
   };
@@ -82,7 +89,8 @@ function AuthPage() {
       <main className="mx-auto max-w-md px-4 py-16 text-center">
         <MailCheck className="mx-auto size-12 text-primary" />
         <h1 className="mt-4 text-2xl font-extrabold">Check your email</h1>
-        <p className="mt-2 text-muted-foreground">We sent a confirmation link to <strong>{email}</strong>. Click it to finish creating your profile.</p>
+        <p className="mt-2 text-muted-foreground">We sent a confirmation link to <strong>{email}</strong>. Click it to finish creating your profile. This page continues automatically once you're confirmed.</p>
+        <Button variant="outline" className="mt-6" onClick={() => { setSent(false); setMode("signin"); }}>I've confirmed, sign in</Button>
       </main>
     );
   }

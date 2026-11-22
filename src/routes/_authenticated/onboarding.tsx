@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronsUpDown, X, Plus, Trash2, FileUp } from "lucide-react";
+import { Check, ChevronsUpDown, X, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { CvUpload } from "@/components/app/CvUpload";
+import type { ParsedCv } from "@/lib/cv.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { skillNamesQuery, universitiesQuery } from "@/lib/queries";
 import { CITIES, LEVELS, LOOKING_FOR, PROGRAMMES, ROLE_TYPES, SKILL_CATEGORIES, WORK_MODES } from "@/lib/domain";
@@ -65,6 +67,19 @@ function Onboarding() {
     });
   }, [user]);
 
+  const applyCv = (cv: ParsedCv) => {
+    if (cv.university) setUni(cv.university);
+    if (cv.programme) setProgramme(cv.programme);
+    if (cv.study_level) setLevel(cv.study_level);
+    if (cv.grad_year) setGrad(String(cv.grad_year));
+    setSkills((prev) => {
+      const have = new Set(prev.map((x) => x.skill.toLowerCase()));
+      return [...prev, ...cv.skills.filter((x) => !have.has(x.skill.toLowerCase()))];
+    });
+    setExps((prev) => [...prev, ...cv.experiences.map((x) => ({ title: x.title, company: x.company, start_date: x.start_date ?? "", end_date: x.end_date ?? "", description: x.description ?? "" }))]);
+  };
+  const cvUpload = <CvUpload knownSkills={allSkills.map((x) => x.name)} knownUniversities={unis.map((u) => u.name)} onParsed={applyCv} />;
+
   const canNext = [!!uni && !!programme && !!level && !!grad, skills.length > 0, true, lf.length > 0][step];
 
   const finish = async (): Promise<void> => {
@@ -95,13 +110,14 @@ function Onboarding() {
       <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-card md:p-8">
         {step === 0 && (
           <div className="space-y-4">
-            <h1 className="text-2xl font-extrabold">Where do you study?</h1>
+            {cvUpload}
+            <h1 className="pt-2 text-2xl font-extrabold">Where do you study?</h1>
             <Field label="University"><Combo value={uni} onChange={setUni} placeholder="Search universities" groups={[
               { heading: "Popular", items: unis.filter((u) => u.featured).map((u) => u.name) },
               { heading: "Sweden", items: unis.filter((u) => !u.featured && u.country === "Sweden").map((u) => u.name) },
               { heading: "Europe", items: unis.filter((u) => u.country !== "Sweden").map((u) => u.name) },
             ]} /></Field>
-            <Field label="Programme"><Combo value={programme} onChange={setProgramme} placeholder="Search programmes" allowCustom groups={[{ heading: "Programmes", items: [...PROGRAMMES] }]} /></Field>
+            <Field label="Programme (type your own if it's missing)"><Combo value={programme} onChange={setProgramme} placeholder="Search programmes" allowCustom groups={[{ heading: "Programmes", items: [...PROGRAMMES] }]} /></Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Study level">
                 <Select value={level} onValueChange={setLevel}><SelectTrigger><SelectValue /></SelectTrigger>
@@ -115,7 +131,7 @@ function Onboarding() {
           </div>
         )}
         {step === 1 && <SkillsStep all={allSkills} skills={skills} setSkills={setSkills} />}
-        {step === 2 && <ExpStep exps={exps} setExps={setExps} />}
+        {step === 2 && <ExpStep exps={exps} setExps={setExps} cv={cvUpload} />}
         {step === 3 && (
           <div className="space-y-5">
             <h1 className="text-2xl font-extrabold">What are you looking for?</h1>
@@ -219,14 +235,13 @@ function SkillsStep({ all, skills, setSkills }: { all: { name: string; category:
   );
 }
 
-function ExpStep({ exps, setExps }: { exps: Exp[]; setExps: (e: Exp[]) => void }) {
+function ExpStep({ exps, setExps, cv }: { exps: Exp[]; setExps: (e: Exp[]) => void; cv: React.ReactNode }) {
   const upd = (i: number, patch: Partial<Exp>) => setExps(exps.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-extrabold">Work experience</h1>
-      <div className="flex items-center gap-3 rounded-xl border border-dashed border-border bg-muted/50 p-4 text-sm text-muted-foreground">
-        <FileUp className="size-5 shrink-0" />CV upload with automatic pre-fill is coming soon. For now, add experience manually or skip this step.
-      </div>
+      {cv}
+      <p className="text-sm font-semibold">Or add manually</p>
       {exps.map((x, i) => (
         <div key={i} className="space-y-3 rounded-xl border border-border p-4">
           <div className="grid gap-3 sm:grid-cols-2">

@@ -6,5 +6,5 @@
 - [x] 5. Auth, onboarding, save jobs, /my-jobs
 - [ ] 6. Match score, Quick match, AI summaries
 - [ ] 7. Role explorer
-- [ ] 8. CV upload + parsing
+- [x] 8. CV upload + parsing
 - [ ] 9. Company dashboard, posting, student search

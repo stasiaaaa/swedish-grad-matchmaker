@@ -338,6 +338,8 @@ export type Database = {
       student_profiles: {
         Row: {
           cities: string[]
+          cv_consent_at: string | null
+          cv_path: string | null
           fields: string[]
           grad_year: number | null
           looking_for: string[]
@@ -352,6 +354,8 @@ export type Database = {
         }
         Insert: {
           cities?: string[]
+          cv_consent_at?: string | null
+          cv_path?: string | null
           fields?: string[]
           grad_year?: number | null
           looking_for?: string[]
@@ -366,6 +370,8 @@ export type Database = {
         }
         Update: {
           cities?: string[]
+          cv_consent_at?: string | null
+          cv_path?: string | null
           fields?: string[]
           grad_year?: number | null
           looking_for?: string[]

@@ -48,9 +48,14 @@ export function daysUntil(date: string | null | undefined): number | null {
 }
 
 export const PROGRAMMES = [
-  "Computer Science and Engineering", "Industrial Engineering and Management", "Information Technology",
-  "Applied Physics and Electrical Engineering", "Mechanical Engineering", "Engineering Biology",
-  "Electrical Engineering", "Engineering Physics", "Media Technology", "Energy and Environmental Engineering",
+  "Computer Science and Engineering", "Software Engineering", "Computer Engineering", "Information Technology",
+  "Industrial Engineering and Management", "Applied Physics and Electrical Engineering", "Electrical Engineering",
+  "Engineering Physics", "Mechanical Engineering", "Engineering Biology", "Biotechnology", "Chemical Engineering",
+  "Civil Engineering", "Media Technology", "Design and Product Development", "Energy and Environmental Engineering",
+  "Aerospace Engineering", "Vehicle Engineering", "Mathematics", "Statistics and Machine Learning",
+  "Data Science", "Machine Learning", "Cybersecurity", "Embedded Systems", "Robotics and Autonomous Systems",
+  "Communication Systems", "Medical Engineering", "Logistics and Supply Chain", "Architecture",
+  "Single-subject courses (separate courses)",
 ] as const;
 export const SKILL_CATEGORIES = ["Programming", "Embedded and Hardware", "Data and AI", "Security", "Engineering tools", "Business", "Languages", "Soft skills"] as const;
 export const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;

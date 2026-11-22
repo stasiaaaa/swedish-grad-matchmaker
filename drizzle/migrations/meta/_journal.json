@@ -15,6 +15,13 @@
       "when": 1795308935442,
       "tag": "0001_accounts_profiles_saved_jobs",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795309617862,
+      "tag": "0002_cv_storage_policies",
+      "breakpoints": true
     }
   ]
 }
