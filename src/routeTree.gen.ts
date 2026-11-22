@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as WatchingRouteImport } from './routes/watching'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedMyJobsRouteImport } from './routes/_authenticated/my-jobs'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
@@ -38,6 +39,11 @@ const WatchingRoute = WatchingRouteImport.update({
   id: '/watching',
   path: '/watching',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMyJobsRoute = AuthenticatedMyJobsRouteImport.update({
   id: '/my-jobs',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/watching': typeof WatchingRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/my-jobs': typeof AuthenticatedMyJobsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/watching': typeof WatchingRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/my-jobs': typeof AuthenticatedMyJobsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/watching': typeof WatchingRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/my-jobs': typeof AuthenticatedMyJobsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/watching'
+    | '/admin'
     | '/my-jobs'
     | '/onboarding'
     | '/companies/$slug'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/watching'
+    | '/admin'
     | '/my-jobs'
     | '/onboarding'
     | '/companies/$slug'
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/watching'
+    | '/_authenticated/admin'
     | '/_authenticated/my-jobs'
     | '/_authenticated/onboarding'
     | '/companies/$slug'
@@ -183,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WatchingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/my-jobs': {
       id: '/_authenticated/my-jobs'
       path: '/my-jobs'
@@ -229,11 +248,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedMyJobsRoute: typeof AuthenticatedMyJobsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedMyJobsRoute: AuthenticatedMyJobsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
 }

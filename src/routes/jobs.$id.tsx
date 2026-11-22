@@ -64,10 +64,13 @@ function JobDetail() {
           <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5"><MapPin className="size-4" />{job.location_label} · {workModeLabel[job.work_mode]}</span>
             <span className="flex items-center gap-1.5"><Clock className="size-4" />Posted <TimeAgo iso={job.posted_at} /></span>
-            {left !== null && left >= 0 && <span className="flex items-center gap-1.5"><CalendarClock className="size-4" />Apply by {job.deadline} ({left} days left)</span>}
+            {job.status === "open" && left !== null && left >= 0 && <span className="flex items-center gap-1.5"><CalendarClock className="size-4" />Apply by {job.deadline} ({left} days left)</span>}
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
-            {job.source_url && (
+            {job.status === "closed" && (
+              <p className="w-full rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">{job.source === "seed" ? "This was a sample listing and has been removed now that real jobs are collected." : "This listing has closed — it no longer appears on the company's site."}</p>
+            )}
+            {job.status === "open" && job.source_url && (
               <Button asChild size="lg"><a href={job.source_url} target="_blank" rel="noopener noreferrer">Apply on company site <ExternalLink className="size-4" /></a></Button>
             )}
             <SaveButton jobId={job.id} />

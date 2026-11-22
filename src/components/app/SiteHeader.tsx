@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { myProfileQuery } from "@/lib/account";
+import { NotificationBell } from "./NotificationBell";
 
 const linkCls = "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground";
 
@@ -12,6 +15,8 @@ export function SiteHeader() {
   const { user, loading } = useAuth();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const { data: me } = useQuery(myProfileQuery(user?.id));
+  const isAdmin = !!me?.roles.includes("admin");
   const signOut = async () => {
     await qc.cancelQueries();
     qc.clear();
@@ -32,6 +37,8 @@ export function SiteHeader() {
           {!loading && !user && (
             <Button asChild size="sm" className="ml-1"><Link to="/auth" search={{ mode: "signup" }}>Create profile</Link></Button>
           )}
+          {isAdmin && <Link to="/admin" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>Admin</Link>}
+          {user && <NotificationBell userId={user.id} />}
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

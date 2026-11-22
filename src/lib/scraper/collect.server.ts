@@ -37,7 +37,7 @@ function cityOf(text: string): string | null { for (const [re, c] of CITY_WORDS)
 function domainRoot(u: string | null | undefined): string | null { if (!u) return null; try { const p = new URL(u.startsWith("http") ? u : `https://${u}`).hostname.split("."); return p.length >= 2 ? p[p.length - 2]! : null; } catch { return null; } }
 const norm = (s: string) => s.toLowerCase().replace(/\b(ab|aktiebolag|group|sverige|sweden|publ)\b/g, "").replace(/[^a-z0-9åäö]/g, "");
 
-async function fromJobTech(c: Company): Promise<Raw[]> {
+export async function fromJobTech(c: Company): Promise<Raw[]> {
   const munis = Object.keys(JOBTECH_REGIONS).map((m) => `region=${m}`).join("&");
   const tokens = c.name.toLowerCase().split(/[^a-z0-9åäö]+/).filter((t) => t.length > 1 && !["ab", "group", "the"].includes(t)).map((t) => t.replace(/s$/, ""));
   const root = domainRoot(c.website) ?? domainRoot(c.careers_url);
@@ -62,7 +62,7 @@ async function fromJobTech(c: Company): Promise<Raw[]> {
   return out;
 }
 
-async function fromAts(c: Company): Promise<Raw[]> {
+export async function fromAts(c: Company): Promise<Raw[]> {
   const id = c.ats_identifier; if (!id) return [];
   const out: Raw[] = [];
   const push = (r: Omit<Raw, "city" | "remote" | "location_label"> & { loc: string; remoteHint?: boolean }) => {

@@ -105,7 +105,7 @@ function MyJobs() {
                     {r.closed && <Badge variant="outline" className="text-muted-foreground">No longer open</Badge>}
                     <span className="rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">{r.score}% match</span>
                     <span>Saved {new Date(r.saved_at).toLocaleDateString("sv-SE")}</span>
-                    {left !== null && left >= 0 && <span className={left <= 7 ? "font-semibold text-destructive" : ""}>Deadline {j.deadline}</span>}
+                    {j.status === "open" && left !== null && left >= 0 && <span className={left <= 7 ? "font-semibold text-destructive" : ""}>Deadline {j.deadline}</span>}
                   </div>
                 </div>
               </div>

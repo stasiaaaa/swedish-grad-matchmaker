@@ -8,3 +8,6 @@
 - [ ] 7. Role explorer
 - [x] 8. CV upload + parsing
 - [ ] 9. Company dashboard, posting, student search
+- [ ] Notify emails (blocked: email domain)
+- [x] Admin page + admin access
+- [x] Test notifications/admin

@@ -14,6 +14,18 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_emails: {
+        Row: {
+          email: string
+        }
+        Insert: {
+          email: string
+        }
+        Update: {
+          email?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           ats_identifier: string | null
@@ -105,18 +117,21 @@ export type Database = {
         Row: {
           company_id: string
           created_at: string
+          email_opt_in: boolean
           id: string
           user_id: string
         }
         Insert: {
           company_id: string
           created_at?: string
+          email_opt_in?: boolean
           id?: string
           user_id: string
         }
         Update: {
           company_id?: string
           created_at?: string
+          email_opt_in?: boolean
           id?: string
           user_id?: string
         }
@@ -163,6 +178,38 @@ export type Database = {
         }
         Relationships: []
       }
+      guest_subscriptions: {
+        Row: {
+          company_id: string
+          consent_at: string
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          company_id: string
+          consent_at?: string
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          company_id?: string
+          consent_at?: string
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           city: string
@@ -184,6 +231,7 @@ export type Database = {
           min_level: string | null
           missed_runs: number
           nice_skills: string[]
+          notified_at: string | null
           posted_at: string
           required_skills: string[]
           role_type: string
@@ -214,6 +262,7 @@ export type Database = {
           min_level?: string | null
           missed_runs?: number
           nice_skills?: string[]
+          notified_at?: string | null
           posted_at?: string
           required_skills?: string[]
           role_type: string
@@ -244,6 +293,7 @@ export type Database = {
           min_level?: string | null
           missed_runs?: number
           nice_skills?: string[]
+          notified_at?: string | null
           posted_at?: string
           required_skills?: string[]
           role_type?: string
@@ -260,6 +310,54 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          company_id: string | null
+          created_at: string
+          id: string
+          job_id: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
         ]

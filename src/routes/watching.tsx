@@ -73,7 +73,7 @@ function Watching() {
               {c.watch_note && <p className="mt-2 text-sm text-muted-foreground">{c.watch_note}</p>}
               {c.last_posting_at && <p className="mt-2 text-xs text-muted-foreground">Last known posting: <TimeAgo iso={c.last_posting_at} /></p>}
               <div className="mt-auto flex gap-2 pt-4">
-                <NotifyButton companyId={c.id} />
+                <NotifyButton companyId={c.id} companyName={c.name} />
                 {c.careers_url && (
                   <Button asChild variant="outline" size="icon" aria-label="Careers page">
                     <a href={c.careers_url} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-4" /></a>

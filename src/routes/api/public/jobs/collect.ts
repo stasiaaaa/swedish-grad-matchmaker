@@ -49,11 +49,13 @@ export const Route = createFileRoute("/api/public/jobs/collect")({
           for (const r of res) if (r.status === "fulfilled" && r.value) touched.add(r.value); else if (r.status === "rejected") errors.push(`AI: ${String(r.reason).slice(0, 120)}`);
         }
         for (const id of touched) await refreshCompanyStatus(db, id);
+        const { notifyNewJobs } = await import("@/lib/scraper/notify.server");
+        const notified = await notifyNewJobs(db, new URL(request.url).origin);
         // Retire the sample jobs once enough real ones exist.
         const real = (await db.from("jobs").select("id", { count: "exact", head: true }).eq("status", "open").neq("source", "seed")).count ?? 0;
         if (real >= 20) await db.from("jobs").update({ status: "closed" }).eq("source", "seed").eq("status", "open");
         await db.from("scrape_runs").update({ ...totals, errors: errors.slice(-50), finished_at: new Date().toISOString() }).eq("id", run.id);
-        return Response.json({ ok: true, ...totals });
+        return Response.json({ ok: true, ...totals, notified });
       },
     },
   },
