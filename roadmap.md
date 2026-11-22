@@ -1,6 +1,6 @@
 # LaunchPad roadmap
-- [ ] Publish app for the existing twice-daily collection schedule
-- [ ] Import real jobs spreadsheet in admin (blocked: user spreadsheet not supplied; existing CSV importer accepts companies)
+- [x] Request publishing for the existing twice-daily collection schedule
+- [x] Confirm automatic collection from enabled companies; no spreadsheet import requested
 - [x] 1. Schema, seed data, public job list, filters, job + company pages
 - [x] 2. Map view (OpenStreetMap) with watched companies toggle
 - [ ] 3. Admin page, scraper, scheduling, closing logic, health
