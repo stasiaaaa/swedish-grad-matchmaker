@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { TimeAgo } from "@/components/app/TimeAgo";
 import { MapPin, Clock, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CompanyLogo } from "./CompanyLogo";
-import { lookingForLabel, workModeLabel, timeAgo, daysUntil } from "@/lib/domain";
+import { lookingForLabel, workModeLabel, daysUntil } from "@/lib/domain";
 import type { JobRow } from "@/lib/queries";
 
 export function JobCard({ job }: { job: JobRow }) {
@@ -39,7 +40,7 @@ export function JobCard({ job }: { job: JobRow }) {
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><MapPin className="size-3.5" />{job.location_label} · {workModeLabel[job.work_mode]}</span>
-            <span className="flex items-center gap-1"><Clock className="size-3.5" />{timeAgo(job.posted_at)}</span>
+            <span className="flex items-center gap-1"><Clock className="size-3.5" /><TimeAgo iso={job.posted_at} /></span>
             {left !== null && left >= 0 && (
               <span className={`flex items-center gap-1 ${left <= 7 ? "font-semibold text-destructive" : ""}`}>
                 <CalendarClock className="size-3.5" />{left === 0 ? "Closes today" : `Closes in ${left} days`}

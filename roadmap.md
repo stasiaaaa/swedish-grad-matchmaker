@@ -1,6 +1,6 @@
 # LaunchPad roadmap
 - [x] 1. Schema, seed data, public job list, filters, job + company pages
-- [ ] 2. Map view (OpenStreetMap) with watched companies toggle
+- [x] 2. Map view (OpenStreetMap) with watched companies toggle
 - [ ] 3. Admin page, scraper, scheduling, closing logic, health
 - [ ] 4. Watched companies page, subscriptions, notification emails
 - [ ] 5. Auth, onboarding, save jobs, /my-jobs

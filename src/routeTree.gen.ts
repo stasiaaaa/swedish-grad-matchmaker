@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WatchingRouteImport } from './routes/watching'
 import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
@@ -17,6 +18,11 @@ import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WatchingRoute = WatchingRouteImport.update({
+  id: '/watching',
+  path: '/watching',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompaniesSlugRoute = CompaniesSlugRouteImport.update({
@@ -37,12 +43,14 @@ const JobsIdRoute = JobsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/watching': typeof WatchingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
   '/jobs/$id': typeof JobsIdRoute
   '/jobs/': typeof JobsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/watching': typeof WatchingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
   '/jobs/$id': typeof JobsIdRoute
   '/jobs': typeof JobsIndexRoute
@@ -50,20 +58,23 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/watching': typeof WatchingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
   '/jobs/$id': typeof JobsIdRoute
   '/jobs/': typeof JobsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/companies/$slug' | '/jobs/$id' | '/jobs/'
+  fullPaths: '/' | '/watching' | '/companies/$slug' | '/jobs/$id' | '/jobs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/companies/$slug' | '/jobs/$id' | '/jobs'
-  id: '__root__' | '/' | '/companies/$slug' | '/jobs/$id' | '/jobs/'
+  to: '/' | '/watching' | '/companies/$slug' | '/jobs/$id' | '/jobs'
+  id:
+    '__root__' | '/' | '/watching' | '/companies/$slug' | '/jobs/$id' | '/jobs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  WatchingRoute: typeof WatchingRoute
   CompaniesSlugRoute: typeof CompaniesSlugRoute
   JobsIdRoute: typeof JobsIdRoute
   JobsIndexRoute: typeof JobsIndexRoute
@@ -76,6 +87,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/watching': {
+      id: '/watching'
+      path: '/watching'
+      fullPath: '/watching'
+      preLoaderRoute: typeof WatchingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companies/$slug': {
@@ -104,6 +122,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  WatchingRoute: WatchingRoute,
   CompaniesSlugRoute: CompaniesSlugRoute,
   JobsIdRoute: JobsIdRoute,
   JobsIndexRoute: JobsIndexRoute,

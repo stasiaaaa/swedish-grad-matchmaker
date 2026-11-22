@@ -1,10 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { TimeAgo } from "@/components/app/TimeAgo";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ExternalLink, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/app/CompanyLogo";
 import { companyQuery } from "@/lib/queries";
-import { cityLabel, lookingForLabel, timeAgo } from "@/lib/domain";
+import { cityLabel, lookingForLabel } from "@/lib/domain";
 
 export const Route = createFileRoute("/companies/$slug")({
   loader: async ({ context, params }) => {
@@ -50,7 +51,7 @@ function CompanyPage() {
             <p className="flex items-center gap-2 font-semibold"><Eye className="size-4" />We're watching this company</p>
             {c.hiring_period && <p className="mt-1">{c.hiring_period}.</p>}
             {c.watch_note && <p className="mt-1 text-muted-foreground">{c.watch_note}</p>}
-            {c.last_posting_at && <p className="mt-1 text-muted-foreground">Last known posting: {timeAgo(c.last_posting_at)}</p>}
+            {c.last_posting_at && <p className="mt-1 text-muted-foreground">Last known posting: <TimeAgo iso={c.last_posting_at} /></p>}
           </div>
         )}
         {c.careers_url && (
@@ -68,7 +69,7 @@ function CompanyPage() {
                 <p className="font-semibold">{j.title}</p>
                 <p className="text-sm text-muted-foreground">{lookingForLabel[j.looking_for]} · {j.location_label}</p>
               </div>
-              <span className="text-xs text-muted-foreground">{timeAgo(j.posted_at)}</span>
+              <span className="text-xs text-muted-foreground"><TimeAgo iso={j.posted_at} /></span>
             </Link>
           ))}
         </div>

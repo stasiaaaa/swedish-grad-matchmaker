@@ -3,6 +3,7 @@ import { Rocket } from "lucide-react";
 
 const nav = [
   { to: "/jobs", label: "Find jobs" },
+  { to: "/watching", label: "Watching" },
 ] as const;
 
 export function SiteHeader() {

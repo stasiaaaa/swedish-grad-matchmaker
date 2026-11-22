@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { TimeAgo } from "@/components/app/TimeAgo";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, Bookmark, MapPin, Clock, CalendarClock, Building2 } from "lucide-react";
 import { toast } from "sonner";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CompanyLogo } from "@/components/app/CompanyLogo";
 import { jobQuery } from "@/lib/queries";
-import { lookingForLabel, workModeLabel, timeAgo, daysUntil } from "@/lib/domain";
+import { lookingForLabel, workModeLabel, daysUntil } from "@/lib/domain";
 
 export const Route = createFileRoute("/jobs/$id")({
   loader: async ({ context, params }) => {
@@ -62,7 +63,7 @@ function JobDetail() {
           </div>
           <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5"><MapPin className="size-4" />{job.location_label} · {workModeLabel[job.work_mode]}</span>
-            <span className="flex items-center gap-1.5"><Clock className="size-4" />Posted {timeAgo(job.posted_at)}</span>
+            <span className="flex items-center gap-1.5"><Clock className="size-4" />Posted <TimeAgo iso={job.posted_at} /></span>
             {left !== null && left >= 0 && <span className="flex items-center gap-1.5"><CalendarClock className="size-4" />Apply by {job.deadline} ({left} days left)</span>}
           </div>
           <div className="mt-6 flex flex-wrap gap-2">

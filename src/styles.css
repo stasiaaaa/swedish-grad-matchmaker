@@ -118,6 +118,19 @@
   --sidebar-accent-foreground: oklch(0.25 0.04 185);
   --sidebar-border: oklch(0.91 0.015 175);
   --sidebar-ring: oklch(0.6 0.12 178);
+  --role-1: oklch(0.62 0.15 178);
+  --role-2: oklch(0.62 0.15 25);
+  --role-3: oklch(0.62 0.15 260);
+  --role-4: oklch(0.62 0.15 330);
+  --role-5: oklch(0.62 0.15 45);
+  --role-6: oklch(0.62 0.15 210);
+  --role-7: oklch(0.62 0.15 90);
+  --role-8: oklch(0.62 0.15 140);
+  --role-9: oklch(0.62 0.15 300);
+  --role-10: oklch(0.62 0.15 0);
+  --role-11: oklch(0.62 0.15 230);
+  --role-12: oklch(0.62 0.15 60);
+  --role-13: oklch(0.62 0.15 160);
   --gradient-hero: radial-gradient(1200px 500px at 85% -10%, oklch(0.9 0.08 178 / 0.7), transparent 60%), radial-gradient(800px 400px at -10% 110%, oklch(0.93 0.08 85 / 0.6), transparent 60%);
   --shadow-card: 0 1px 2px oklch(0.3 0.05 185 / 0.06), 0 8px 24px -12px oklch(0.3 0.05 185 / 0.18);
   --shadow-lift: 0 2px 4px oklch(0.3 0.05 185 / 0.08), 0 18px 40px -16px oklch(0.45 0.1 178 / 0.35);
@@ -138,3 +151,8 @@
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
 }
 @utility bg-hero { background-image: var(--gradient-hero); }
+
+.lp-pin { width: 18px; height: 18px; border-radius: 9999px; border: 3px solid var(--card); box-shadow: var(--shadow-card); }
+.lp-pin-hollow { width: 18px; height: 18px; border-radius: 9999px; border: 3px solid; background: var(--card); }
+.lp-cluster { display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:9999px; background: var(--primary); color: var(--primary-foreground); font-weight:700; border: 4px solid color-mix(in oklab, var(--primary) 30%, transparent); background-clip: padding-box; }
+.leaflet-container { font-family: var(--font-sans); }

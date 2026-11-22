@@ -79,3 +79,17 @@ export const skillNamesQuery = () =>
       return data;
     },
   });
+
+export const watchedCompaniesQuery = () =>
+  queryOptions({
+    queryKey: ["watched-companies"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("companies")
+        .select("id,name,slug,industry,city,cities,typical_roles,hiring_period,watch_note,last_posting_at,careers_url,lat,lng")
+        .eq("is_watched", true)
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
