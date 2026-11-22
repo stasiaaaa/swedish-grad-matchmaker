@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Domain constants (cities, looking-for categories, role types, work modes) live in `src/lib/domain.ts`; DB stores their keys. Why: one source for labels and filters.
+- Public data reads use the browser Supabase client via TanStack Query options in `src/lib/queries.ts`. Why: tables are publicly readable under RLS.
