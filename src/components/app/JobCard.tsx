@@ -3,6 +3,7 @@ import { TimeAgo } from "@/components/app/TimeAgo";
 import { MapPin, Clock, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CompanyLogo } from "./CompanyLogo";
+import { SaveButton } from "./SaveButton";
 import { lookingForLabel, workModeLabel, daysUntil } from "@/lib/domain";
 import type { JobRow } from "@/lib/queries";
 
@@ -17,6 +18,7 @@ export function JobCard({ job }: { job: JobRow }) {
       <div className="flex gap-4">
         <CompanyLogo name={job.company?.name ?? "?"} />
         <div className="min-w-0 flex-1">
+          <div className="float-right ml-2"><SaveButton jobId={job.id} iconOnly /></div>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={job.looking_for === "thesis" ? "default" : "secondary"}>
               {lookingForLabel[job.looking_for]}

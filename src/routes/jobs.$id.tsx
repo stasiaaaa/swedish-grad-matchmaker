@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { TimeAgo } from "@/components/app/TimeAgo";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, ExternalLink, Bookmark, MapPin, Clock, CalendarClock, Building2 } from "lucide-react";
-import { toast } from "sonner";
+import { ArrowLeft, ExternalLink, MapPin, Clock, CalendarClock, Building2 } from "lucide-react";
+import { SaveButton } from "@/components/app/SaveButton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CompanyLogo } from "@/components/app/CompanyLogo";
@@ -70,9 +70,7 @@ function JobDetail() {
             {job.source_url && (
               <Button asChild size="lg"><a href={job.source_url} target="_blank" rel="noopener noreferrer">Apply on company site <ExternalLink className="size-4" /></a></Button>
             )}
-            <Button size="lg" variant="outline" onClick={() => toast("Create a free profile to save this job", { description: "Saving jobs is coming soon." })}>
-              <Bookmark className="size-4" />Save
-            </Button>
+            <SaveButton jobId={job.id} />
           </div>
           <h2 className="mt-8 text-lg font-bold">Summary</h2>
           <p className="mt-2 leading-relaxed text-foreground/85">{job.summary}</p>

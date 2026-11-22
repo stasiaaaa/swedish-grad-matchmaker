@@ -8,6 +8,13 @@
       "when": 1795308019047,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795308935442,
+      "tag": "0001_accounts_profiles_saved_jobs",
+      "breakpoints": true
     }
   ]
 }

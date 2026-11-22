@@ -101,6 +101,68 @@ export type Database = {
         }
         Relationships: []
       }
+      company_follows: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_follows_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiences: {
+        Row: {
+          company: string
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          start_date: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           city: string
@@ -199,6 +261,62 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          account_type: string
+          created_at: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          account_type?: string
+          created_at?: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          account_type?: string
+          created_at?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      saved_jobs: {
+        Row: {
+          id: string
+          job_id: string
+          notes: string | null
+          saved_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          notes?: string | null
+          saved_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          job_id?: string
+          notes?: string | null
+          saved_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_jobs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       skills: {
         Row: {
           category: string
@@ -214,6 +332,72 @@ export type Database = {
           category?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      student_profiles: {
+        Row: {
+          cities: string[]
+          fields: string[]
+          grad_year: number | null
+          looking_for: string[]
+          onboarded: boolean
+          programme: string | null
+          study_level: string | null
+          university: string | null
+          updated_at: string
+          user_id: string
+          visible_to_companies: boolean
+          work_modes: string[]
+        }
+        Insert: {
+          cities?: string[]
+          fields?: string[]
+          grad_year?: number | null
+          looking_for?: string[]
+          onboarded?: boolean
+          programme?: string | null
+          study_level?: string | null
+          university?: string | null
+          updated_at?: string
+          user_id: string
+          visible_to_companies?: boolean
+          work_modes?: string[]
+        }
+        Update: {
+          cities?: string[]
+          fields?: string[]
+          grad_year?: number | null
+          looking_for?: string[]
+          onboarded?: boolean
+          programme?: string | null
+          study_level?: string | null
+          university?: string | null
+          updated_at?: string
+          user_id?: string
+          visible_to_companies?: boolean
+          work_modes?: string[]
+        }
+        Relationships: []
+      }
+      student_skills: {
+        Row: {
+          id: string
+          level: string
+          skill: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          level?: string
+          skill: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          level?: string
+          skill?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -244,15 +428,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "company" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -379,6 +587,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "company", "student"],
+    },
   },
 } as const

@@ -3,7 +3,6 @@ import { TimeAgo } from "@/components/app/TimeAgo";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Search, ExternalLink, CalendarClock, Bell } from "lucide-react";
-import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CompanyLogo } from "@/components/app/CompanyLogo";
@@ -74,9 +73,7 @@ function Watching() {
               {c.watch_note && <p className="mt-2 text-sm text-muted-foreground">{c.watch_note}</p>}
               {c.last_posting_at && <p className="mt-2 text-xs text-muted-foreground">Last known posting: <TimeAgo iso={c.last_posting_at} /></p>}
               <div className="mt-auto flex gap-2 pt-4">
-                <Button className="flex-1" onClick={() => toast("Notifications are coming soon", { description: "You'll be able to subscribe with just your email." })}>
-                  <Bell className="size-4" />Notify me
-                </Button>
+                <NotifyButton companyId={c.id} />
                 {c.careers_url && (
                   <Button asChild variant="outline" size="icon" aria-label="Careers page">
                     <a href={c.careers_url} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-4" /></a>
@@ -90,3 +87,5 @@ function Watching() {
     </main>
   );
 }
+
+import { NotifyButton } from "@/components/app/NotifyButton";

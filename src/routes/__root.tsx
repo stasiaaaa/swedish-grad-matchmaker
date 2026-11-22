@@ -14,6 +14,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/app/SiteHeader";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/hooks/useAuth";
+import { GateProvider } from "@/components/app/GatedModal";
 
 function NotFoundComponent() {
   return (
@@ -128,9 +130,13 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <SiteHeader />
-      <Outlet />
-      <Toaster />
+      <AuthProvider>
+        <GateProvider>
+          <SiteHeader />
+          <Outlet />
+          <Toaster />
+        </GateProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

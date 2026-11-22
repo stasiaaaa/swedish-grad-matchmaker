@@ -93,3 +93,13 @@ export const watchedCompaniesQuery = () =>
       return data;
     },
   });
+
+export const universitiesQuery = () =>
+  queryOptions({
+    queryKey: ["universities"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("universities").select("name,country,featured,sort_order").order("sort_order").order("name");
+      if (error) throw error;
+      return data;
+    },
+  });

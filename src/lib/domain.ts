@@ -46,3 +46,11 @@ export function daysUntil(date: string | null | undefined): number | null {
   if (!date) return null;
   return Math.ceil((new Date(date).getTime() - Date.now()) / 86400000);
 }
+
+export const PROGRAMMES = [
+  "Computer Science and Engineering", "Industrial Engineering and Management", "Information Technology",
+  "Applied Physics and Electrical Engineering", "Mechanical Engineering", "Engineering Biology",
+  "Electrical Engineering", "Engineering Physics", "Media Technology", "Energy and Environmental Engineering",
+] as const;
+export const SKILL_CATEGORIES = ["Programming", "Embedded and Hardware", "Data and AI", "Security", "Engineering tools", "Business", "Languages", "Soft skills"] as const;
+export const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;
