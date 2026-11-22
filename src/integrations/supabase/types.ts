@@ -167,6 +167,7 @@ export type Database = {
         Row: {
           city: string
           company_id: string
+          content_hash: string | null
           created_at: string
           deadline: string | null
           description: string | null
@@ -196,6 +197,7 @@ export type Database = {
         Insert: {
           city: string
           company_id: string
+          content_hash?: string | null
           created_at?: string
           deadline?: string | null
           description?: string | null
@@ -225,6 +227,7 @@ export type Database = {
         Update: {
           city?: string
           company_id?: string
+          content_hash?: string | null
           created_at?: string
           deadline?: string | null
           description?: string | null
@@ -316,6 +319,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      scrape_runs: {
+        Row: {
+          companies_checked: number
+          errors: Json
+          finished_at: string | null
+          id: string
+          jobs_closed: number
+          jobs_new: number
+          jobs_updated: number
+          started_at: string
+        }
+        Insert: {
+          companies_checked?: number
+          errors?: Json
+          finished_at?: string | null
+          id?: string
+          jobs_closed?: number
+          jobs_new?: number
+          jobs_updated?: number
+          started_at?: string
+        }
+        Update: {
+          companies_checked?: number
+          errors?: Json
+          finished_at?: string | null
+          id?: string
+          jobs_closed?: number
+          jobs_new?: number
+          jobs_updated?: number
+          started_at?: string
+        }
+        Relationships: []
       }
       skills: {
         Row: {

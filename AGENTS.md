@@ -32,3 +32,4 @@ use the editor.
 ## Project rules
 - Domain constants (cities, looking-for categories, role types, work modes) live in `src/lib/domain.ts`; DB stores their keys. Why: one source for labels and filters.
 - Public data reads use the browser Supabase client via TanStack Query options in `src/lib/queries.ts`. Why: tables are publicly readable under RLS.
+- Job collection runs as a frequent scheduled tick (`/api/public/jobs/collect`, code in `src/lib/scraper/`): each call handles one company plus a few AI normalisations, and real re-collection only happens in the 06:00/18:00 Stockholm windows. Why: scheduled calls must finish within seconds.
