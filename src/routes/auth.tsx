@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { GraduationCap, Building2, MailCheck } from "lucide-react";
@@ -47,10 +47,14 @@ function AuthPage() {
 
   useEffect(() => {
     if (loading || !user) return;
+    if (user.user_metadata?.["account_type"] === "company") {
+      navigate({ to: "/demo", search: {role:"company"}, replace:true });
+      return;
+    }
     const target = safePath(search.redirect) ?? sessionStorage.getItem("lp_after_auth") ?? "/my-jobs";
     sessionStorage.removeItem("lp_after_auth");
     supabase.from("student_profiles").select("onboarded").eq("user_id", user.id).maybeSingle().then(({ data }) => {
-      navigate({ to: data?.onboarded || user.user_metadata?.["account_type"] === "company" ? target : "/onboarding", replace: true });
+      navigate({ to: data?.onboarded ? target : "/onboarding", replace: true });
     });
   }, [user, loading, navigate, search.redirect]);
 
@@ -99,12 +103,12 @@ function AuthPage() {
     <main className="mx-auto max-w-md px-4 py-12">
       <div className="rounded-2xl border border-border bg-card p-6 shadow-card md:p-8">
         <h1 className="text-2xl font-extrabold">{mode === "signup" ? "Create your free profile" : "Welcome back"}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{mode === "signup" ? "Save jobs, get match scores and track applications." : "Sign in to see your saved jobs and matches."}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{type === "company" ? "Publicera jobb och hitta matchande studenter." : mode === "signup" ? "Save jobs, get match scores and track applications." : "Sign in to see your saved jobs and matches."}</p>
 
-        {mode === "signup" && (
+        {(
           <div className="mt-5 grid grid-cols-2 gap-2">
-            {([["student", "I'm a student", GraduationCap], ["company", "I'm a company", Building2]] as const).map(([k, l, I]) => (
-              <button key={k} type="button" onClick={() => setType(k)}
+            {([["student", "Student", GraduationCap], ["company", "Företag", Building2]] as const).map(([k, l, I]) => (
+              <button key={k} type="button" aria-pressed={type === k} onClick={() => setType(k)}
                 className={`flex flex-col items-center gap-1.5 rounded-xl border p-4 text-sm font-semibold transition ${type === k ? "border-primary bg-primary-soft text-accent-foreground" : "border-border hover:border-primary"}`}>
                 <I className="size-5" />{l}
               </button>
@@ -112,6 +116,7 @@ function AuthPage() {
           </div>
         )}
 
+        <Button asChild className="mt-4 w-full"><Link to="/demo" search={{role:type}}>{type === "company" ? "Öppna företagsdemo" : "Öppna studentdemo"}</Link></Button>
         {(mode === "signin" || type === "student") && (
           <>
             <Button type="button" variant="outline" className="mt-5 w-full" onClick={google}><GoogleLogo />Continue with Google</Button>

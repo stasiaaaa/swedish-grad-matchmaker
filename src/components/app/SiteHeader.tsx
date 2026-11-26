@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Rocket, LogOut, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ const linkCls = "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground 
 
 export function SiteHeader() {
   const { user, loading } = useAuth();
+  const isDemo = useLocation({select: location => location.pathname === "/demo"});
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { data: me } = useQuery(myProfileQuery(user?.id));
@@ -30,7 +31,7 @@ export function SiteHeader() {
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Rocket className="size-4" /></span>
           <span className="hidden sm:inline">LaunchPad</span>
         </Link>
-        <nav className="flex items-center gap-1">
+        {isDemo ? <Link className={linkCls} to="/">Avsluta demo</Link> : <nav className="flex items-center gap-1">
           <Link to="/jobs" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>Find jobs</Link>
           <Link to="/watching" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>Watching</Link>
           {user && <Link to="/my-jobs" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>My jobs</Link>}
@@ -54,7 +55,7 @@ export function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-        </nav>
+        </nav>}
       </div>
     </header>
   );

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronsUpDown, X, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { SampleUploads } from "@/components/app/StudentDemo";
+import { SAMPLE_CV_SKILLS, SAMPLE_LADOK } from "@/lib/demo/store";
+import { COURSE_BY_CODE } from "@/lib/demo/catalog";
 import { CvUpload } from "@/components/app/CvUpload";
 import type { ParsedCv } from "@/lib/cv.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { skillNamesQuery, universitiesQuery } from "@/lib/queries";
-import { CITIES, LEVELS, LOOKING_FOR, PROGRAMMES, ROLE_TYPES, SKILL_CATEGORIES, WORK_MODES } from "@/lib/domain";
+import { CITIES, LOOKING_FOR, PROGRAMMES, ROLE_TYPES, WORK_MODES } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({ meta: [{ title: "Your profile — LaunchPad" }, { name: "robots", content: "noindex" }] }),
@@ -42,6 +45,13 @@ function Onboarding() {
   const [level, setLevel] = useState("Master");
   const [grad, setGrad] = useState(String(new Date().getFullYear() + 1));
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [sampleCourses, setSampleCourses] = useState<string[]>([]);
+  function addSkills(names: string[]) {
+    const known = new Set(skills.map(s => s.skill.toLowerCase()));
+    const added = [...new Set(names)].filter(name => !known.has(name.toLowerCase()));
+    setSkills([...skills, ...added.map(skill => ({skill, level:"Intermediate"}))]);
+    return added;
+  }
   const [exps, setExps] = useState<Exp[]>([]);
   const [lf, setLf] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
@@ -51,6 +61,8 @@ function Onboarding() {
 
   useEffect(() => {
     if (!user) return;
+    const saved = localStorage.getItem("launchpad_sample_courses_" + user.id);
+    if (saved) setSampleCourses(SAMPLE_LADOK.filter(code => saved.includes(JSON.stringify(code))));
     Promise.all([
       supabase.from("student_profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("student_skills").select("skill,level").eq("user_id", user.id),
@@ -130,7 +142,13 @@ function Onboarding() {
             </div>
           </div>
         )}
-        {step === 1 && <SkillsStep all={allSkills} skills={skills} setSkills={setSkills} />}
+        {step === 1 && <><SampleUploads onCv={() => addSkills(SAMPLE_CV_SKILLS)} onLadok={() => {
+          addSkills(SAMPLE_LADOK.flatMap(code => COURSE_BY_CODE[code]!.skills));
+          const added = SAMPLE_LADOK.filter(code => !sampleCourses.includes(code));
+          setSampleCourses(SAMPLE_LADOK);
+          localStorage.setItem("launchpad_sample_courses_" + user!.id, JSON.stringify(SAMPLE_LADOK));
+          return added;
+        }} /><p className="mt-3">{skills.map(s => s.skill).join(", ")}</p>{sampleCourses.map(code => <p key={code}>{code} · {COURSE_BY_CODE[code]!.name}</p>)}</>}
         {step === 2 && <ExpStep exps={exps} setExps={setExps} cv={cvUpload} />}
         {step === 3 && (
           <div className="space-y-5">
@@ -192,46 +210,6 @@ function Combo({ value, onChange, placeholder, groups, allowCustom }: { value: s
         </Command>
       </PopoverContent>
     </Popover>
-  );
-}
-
-function SkillsStep({ all, skills, setSkills }: { all: { name: string; category: string }[]; skills: Skill[]; setSkills: (s: Skill[]) => void }) {
-  const [q, setQ] = useState("");
-  const have = new Set(skills.map((s) => s.skill));
-  const add = (name: string) => { if (!have.has(name)) setSkills([...skills, { skill: name, level: "Intermediate" }]); setQ(""); };
-  const grouped = useMemo(() => SKILL_CATEGORIES.map((c) => ({ c, items: all.filter((s) => s.category === c && !have.has(s.name)) })), [all, skills]);
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-extrabold">What are your skills?</h1>
-      <p className="text-sm text-muted-foreground">Pick the skills you have and set how strong you are. These drive your match scores.</p>
-      {skills.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {skills.map((s, i) => (
-            <span key={s.skill} className="flex items-center gap-1 rounded-full border border-primary bg-primary-soft py-1 pl-3 pr-1 text-sm font-medium text-accent-foreground">
-              {s.skill}
-              <select aria-label={`${s.skill} level`} value={s.level} onChange={(e) => setSkills(skills.map((x, j) => (j === i ? { ...x, level: e.target.value } : x)))}
-                className="rounded-full bg-card px-1.5 py-0.5 text-xs outline-none">
-                {LEVELS.map((l) => <option key={l}>{l}</option>)}
-              </select>
-              <button type="button" aria-label={`Remove ${s.skill}`} onClick={() => setSkills(skills.filter((_, j) => j !== i))} className="rounded-full p-1 hover:bg-card"><X className="size-3" /></button>
-            </span>
-          ))}
-        </div>
-      )}
-      <Command className="rounded-xl border border-border">
-        <CommandInput placeholder="Search skills, e.g. Python, CAD, RTOS" value={q} onValueChange={setQ} />
-        <CommandList className="max-h-72">
-          <CommandEmpty>
-            {q ? <button className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm" onClick={() => add(q.trim())}><Plus className="size-4" />Add “{q}” as a custom skill</button> : "Nothing found."}
-          </CommandEmpty>
-          {grouped.filter((g) => g.items.length).map((g) => (
-            <CommandGroup key={g.c} heading={g.c}>
-              {g.items.map((s) => <CommandItem key={s.name} value={s.name} onSelect={() => add(s.name)}>{s.name}</CommandItem>)}
-            </CommandGroup>
-          ))}
-        </CommandList>
-      </Command>
-    </div>
   );
 }
 

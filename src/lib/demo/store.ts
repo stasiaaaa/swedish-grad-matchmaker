@@ -24,7 +24,7 @@ export function seedStudents(): DemoStudent[] {
   const r = rng(42);
   return Array.from({ length: 50 }, (_, i) => {
     const id = `s${String(i + 1).padStart(2, "0")}`;
-    if (i === 0) return { id, name: "Elsa Lind", programme: PROGRAMMES[0]!, year: 4, cvSkills: [], courses: [] };
+    if (i === 0) return { id, name: "Elsa Lind", programme: PROGRAMMES[0]!, year: 4, cvSkills: ["React"], courses: ["TDDD97"] };
     const name = `${FIRST[i % FIRST.length]} ${LAST[Math.floor(r() * LAST.length)]}`;
     return {
       id, name,
@@ -88,7 +88,7 @@ export const demo = {
     return added;
   },
   publish(job: Omit<DemoJob, "id" | "company" | "companyId" | "boosted" | "createdAt">) {
-    const id = `j${Date.now()}`;
+    const id = crypto.randomUUID();
     set((st) => ({ ...st, jobs: [...st.jobs, { ...job, requirements: uniq(job.requirements), id, company: DEMO_COMPANY.name, companyId: DEMO_COMPANY.id, boosted: false, createdAt: Date.now() }] }));
     return id;
   },
