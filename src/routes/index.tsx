@@ -36,8 +36,16 @@ function Landing() {
             Thesis projects, internships and graduate roles in Linköping, Stockholm and Gothenburg. No account needed to browse.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button asChild><Link to="/demo" search={{role:"company"}}>Öppna företagsdemo</Link></Button>
-            <Button asChild variant="outline"><Link to="/demo" search={{role:"student"}}>Öppna studentdemo</Link></Button>
+            <Button asChild>
+              <Link to="/auth" search={{ mode: "signup" }}>
+              Create profile
+            </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/auth" search={{ mode: "signin" }}>
+              Log in
+            </Link>
+            </Button>
           </div>
           <form
             className="mt-8 flex max-w-2xl gap-2 rounded-2xl border border-border bg-card p-2 shadow-lift"

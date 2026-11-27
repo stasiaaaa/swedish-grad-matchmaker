@@ -1,62 +1,100 @@
-import { Link, useNavigate, useLocation } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { Rocket, LogOut, UserRound } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import { myProfileQuery } from "@/lib/account";
 import { NotificationBell } from "./NotificationBell";
-
-const linkCls = "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground";
+import { myProfileQuery } from "@/lib/account";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Rocket } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { currentAccount, demo, homeFor, useDemo } from "@/lib/demo/store";
 
 export function SiteHeader() {
-  const { user, loading } = useAuth();
-  const isDemo = useLocation({select: location => location.pathname === "/demo"});
-  const qc = useQueryClient();
+  const account = currentAccount(useDemo());
   const navigate = useNavigate();
-  const { data: me } = useQuery(myProfileQuery(user?.id));
-  const isAdmin = !!me?.roles.includes("admin");
-  const signOut = async () => {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  };
+  const { user } = useAuth();
   return (
-    <header className="sticky top-0 z-[1000] border-b border-border/70 bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4">
-        <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Rocket className="size-4" /></span>
-          <span className="hidden sm:inline">LaunchPad</span>
+    <header className="border-b bg-card">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <Link
+          to={account ? homeFor(account.role) : "/"}
+          className="flex items-center gap-2 font-display text-xl font-bold"
+        >
+          <Rocket className="text-primary" />
+          LaunchPad
         </Link>
-        {isDemo ? <Link className={linkCls} to="/">Avsluta demo</Link> : <nav className="flex items-center gap-1">
-          <Link to="/jobs" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>Find jobs</Link>
-          <Link to="/watching" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>Watching</Link>
-          {user && <Link to="/my-jobs" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>My jobs</Link>}
-          {!loading && !user && (
-            <Button asChild size="sm" className="ml-1"><Link to="/auth" search={{ mode: "signup" }}>Create profile</Link></Button>
+        <nav className="flex flex-wrap items-center gap-4 text-sm font-medium">
+          {!account && user ? (
+            <LegacyNavigation userId={user.id} />
+          ) : account?.role === "company" ? (
+            <>
+              <Link to="/demo/foretag">Company dashboard</Link>
+              <Link to="/demo/foretag" search={{ cart: true }}>
+                Cart ({account.cart.length})
+              </Link>
+            </>
+          ) : account ? (
+            <>
+              <Link to="/demo/student">Find jobs</Link>
+              <Link to="/demo/student" search={{ view: "tracked" }}>
+                My jobs
+              </Link>
+              <Link to="/demo/student" search={{ view: "profile" }}>
+                Edit profile
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/jobs">Find jobs</Link>
+              <Link to="/watching">Watching</Link>
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Create profile
+              </Link>
+              <Link to="/auth" search={{ mode: "signin" }}>
+                Log in
+              </Link>
+            </>
           )}
-          {isAdmin && <Link to="/admin" className={linkCls} activeProps={{ className: "bg-secondary text-foreground" }}>Admin</Link>}
-          {user && <NotificationBell userId={user.id} />}
-          {user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Account"><UserRound className="size-5" /></Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <div className="px-2 py-1.5 text-xs text-muted-foreground">{user.email}</div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/onboarding">Edit profile</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/my-jobs">My jobs</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}><LogOut className="size-4" />Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {account && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                demo.logout();
+                void navigate({ to: "/auth", replace: true });
+              }}
+            >
+              Log out
+            </Button>
           )}
-        </nav>}
+        </nav>
       </div>
     </header>
+  );
+}
+function LegacyNavigation({ userId }: { userId: string }) {
+  const { data: profile } = useQuery(myProfileQuery(userId));
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  return (
+    <>
+      <Link to="/jobs">Find jobs</Link>
+      <Link to="/watching">Watching</Link>
+      <Link to="/onboarding">Edit profile</Link>
+      <Link to="/my-jobs">My jobs</Link>
+      {profile?.roles.includes("admin") && <Link to="/admin">Admin</Link>}
+      <NotificationBell userId={userId} />
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={async () => {
+          await qc.cancelQueries();
+          await supabase.auth.signOut();
+          qc.clear();
+          await navigate({ to: "/auth", replace: true });
+        }}
+      >
+        Log out
+      </Button>
+    </>
   );
 }

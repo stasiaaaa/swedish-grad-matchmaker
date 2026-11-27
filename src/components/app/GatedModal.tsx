@@ -21,7 +21,11 @@ export function GateProvider({ children }: { children: ReactNode }) {
           </DialogHeader>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button asChild className="flex-1" onClick={() => setTitle(null)}><Link to="/auth" search={{ mode: "signup" }}>Create free profile</Link></Button>
-            <Button asChild variant="outline" className="flex-1" onClick={() => setTitle(null)}><Link to="/auth" search={{}}>Sign in</Link></Button>
+            <Button asChild variant="outline" className="flex-1" onClick={() => setTitle(null)}>
+              <Link to="/auth" search={{}}>
+              Log in
+            </Link>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

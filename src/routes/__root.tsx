@@ -1,3 +1,6 @@
+import { localDestination } from "@/lib/demo/access";
+import { useDemo } from "@/lib/demo/store";
+import { Navigate, redirect, useLocation } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -78,6 +81,11 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  ssr: false,
+  beforeLoad: ({ location }) => {
+    const destination = localDestination(location.pathname);
+    if (destination) throw redirect({ ...destination, replace: true });
+  },
   head: () => ({
     // Replace these placeholders with the app's name and description when first building the app.
     // Each content route, / included, must still set its own head(). Never add og:image or
@@ -127,16 +135,20 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  const session = useDemo().session;
+  const path = useLocation({ select: (l) => l.pathname });
+  const destination = localDestination(path);
+  if (destination) return <Navigate {...destination} replace />;
+  const page = (
+    <GateProvider>
+      <SiteHeader />
+      <Outlet />
+      <Toaster />
+    </GateProvider>
+  );
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AuthProvider>
-        <GateProvider>
-          <SiteHeader />
-          <Outlet />
-          <Toaster />
-        </GateProvider>
-      </AuthProvider>
+      {session || path === "/auth" ? page : <AuthProvider>{page}</AuthProvider>}
     </QueryClientProvider>
   );
 }

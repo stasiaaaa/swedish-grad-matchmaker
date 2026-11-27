@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { SampleUploads } from "@/components/app/StudentDemo";
+import { SampleUploads } from "@/components/app/SampleUploads";
 import { SAMPLE_CV_SKILLS, SAMPLE_LADOK } from "@/lib/demo/store";
 import { COURSE_BY_CODE } from "@/lib/demo/catalog";
 import { CvUpload } from "@/components/app/CvUpload";
