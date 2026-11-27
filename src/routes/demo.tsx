@@ -1,61 +1,33 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { z } from "zod";
-import { ArrowLeftRight, Building2, GraduationCap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CompanyDemo } from "@/components/app/CompanyDemo";
-import { StudentDemo } from "@/components/app/StudentDemo";
-import { DEMO_COMPANY, DEMO_STUDENT_ID, useDemo } from "@/lib/demo/store";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { Building2, GraduationCap } from "lucide-react";
 
 export const Route = createFileRoute("/demo")({
-  validateSearch: z.object({
-    role: z.enum(["student", "company"]).catch("student"),
-    view: z.enum(["home", "create", "students", "profile", "job"]).optional(),
-    job: z.string().optional(),
-    student: z.string().optional(),
-  }),
-  head: () => ({ meta: [{ title: "LaunchPad · Demo" }] }),
   ssr: false,
-  component: DemoPage,
+  head: () => ({ meta: [
+    { title: "Demo — LaunchPad" },
+    { name: "description", content: "Prova LaunchPad som företag eller student med exempeldata." },
+    { property: "og:title", content: "LaunchPad-demo" },
+    { property: "og:description", content: "Publicera ett jobb som företag och se direkt hur det matchar en LiU-student." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+  component: DemoLayout,
 });
 
-function DemoPage() {
-  const { role, view, job, student } = Route.useSearch();
-  const data = useDemo();
-  const company = role === "company";
-  const me = data.students.find((s) => s.id === DEMO_STUDENT_ID)!;
-  const Icon = company ? Building2 : GraduationCap;
+const tab = "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-secondary";
+function DemoLayout() {
   return (
-    <main lang="sv" className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-primary-soft p-5">
-        <div className="flex items-center gap-3">
-          <Icon className="size-6 text-primary" />
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide">
-              {company ? "Företagsdemo" : "Studentdemo"}
-            </p>
-            <p className="font-display text-xl font-bold">
-              {company ? DEMO_COMPANY.name : me.name}
-            </p>
-          </div>
+    <div>
+      <div className="border-b border-border bg-primary-soft/60">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2">
+          <span className="text-sm font-semibold">Demoläge · exempeldata sparas i webbläsaren</span>
+          <nav className="flex gap-1">
+            <Link to="/demo/foretag" className={tab} activeProps={{ className: "bg-background text-foreground shadow-sm" }}><Building2 className="size-4" />Företagsvy</Link>
+            <Link to="/demo/student" className={tab} activeProps={{ className: "bg-background text-foreground shadow-sm" }}><GraduationCap className="size-4" />Studentvy</Link>
+          </nav>
         </div>
-        <Button asChild variant="outline">
-          <Link to="/demo" search={{ role: company ? "student" : "company" }}>
-            <ArrowLeftRight />
-            {company ? "Växla till student" : "Växla till företag"}
-          </Link>
-        </Button>
       </div>
-      {company ? (
-        <CompanyDemo
-          view={view}
-          jobs={data.jobs.filter((j) => j.companyId === DEMO_COMPANY.id)}
-          students={data.students}
-          jobId={job}
-          studentId={student}
-        />
-      ) : (
-        <StudentDemo view={view} jobs={data.jobs} student={me} jobId={job} />
-      )}
-    </main>
+      <Outlet />
+    </div>
   );
 }

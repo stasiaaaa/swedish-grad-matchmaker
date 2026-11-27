@@ -18,8 +18,13 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedMyJobsRouteImport } from './routes/_authenticated/my-jobs'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
+import { Route as DemoIndexRouteImport } from './routes/demo.index'
+import { Route as DemoForetagRouteImport } from './routes/demo.foretag'
+import { Route as DemoStudentRouteImport } from './routes/demo.student'
+import { Route as DemoStudenterRouteImport } from './routes/demo.studenter'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
+import { Route as DemoJobbIdRouteImport } from './routes/demo.jobb.$id'
 import { Route as ApiPublicJobsCollectRouteImport } from './routes/api/public/jobs/collect'
 
 const IndexRoute = IndexRouteImport.update({
@@ -66,6 +71,26 @@ const CompaniesSlugRoute = CompaniesSlugRouteImport.update({
   path: '/companies/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoIndexRoute = DemoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DemoRoute,
+} as any)
+const DemoForetagRoute = DemoForetagRouteImport.update({
+  id: '/foretag',
+  path: '/foretag',
+  getParentRoute: () => DemoRoute,
+} as any)
+const DemoStudentRoute = DemoStudentRouteImport.update({
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => DemoRoute,
+} as any)
+const DemoStudenterRoute = DemoStudenterRouteImport.update({
+  id: '/studenter',
+  path: '/studenter',
+  getParentRoute: () => DemoRoute,
+} as any)
 const JobsIndexRoute = JobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -76,6 +101,11 @@ const JobsIdRoute = JobsIdRouteImport.update({
   path: '/jobs/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoJobbIdRoute = DemoJobbIdRouteImport.update({
+  id: '/jobb/$id',
+  path: '/jobb/$id',
+  getParentRoute: () => DemoRoute,
+} as any)
 const ApiPublicJobsCollectRoute = ApiPublicJobsCollectRouteImport.update({
   id: '/api/public/jobs/collect',
   path: '/api/public/jobs/collect',
@@ -85,27 +115,36 @@ const ApiPublicJobsCollectRoute = ApiPublicJobsCollectRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/demo': typeof DemoRoute
+  '/demo': typeof DemoRouteWithChildren
   '/watching': typeof WatchingRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/my-jobs': typeof AuthenticatedMyJobsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
+  '/demo/foretag': typeof DemoForetagRoute
+  '/demo/student': typeof DemoStudentRoute
+  '/demo/studenter': typeof DemoStudenterRoute
   '/jobs/$id': typeof JobsIdRoute
+  '/demo/': typeof DemoIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/demo/jobb/$id': typeof DemoJobbIdRoute
   '/api/public/jobs/collect': typeof ApiPublicJobsCollectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/demo': typeof DemoRoute
   '/watching': typeof WatchingRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/my-jobs': typeof AuthenticatedMyJobsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
+  '/demo/foretag': typeof DemoForetagRoute
+  '/demo/student': typeof DemoStudentRoute
+  '/demo/studenter': typeof DemoStudenterRoute
   '/jobs/$id': typeof JobsIdRoute
+  '/demo': typeof DemoIndexRoute
   '/jobs': typeof JobsIndexRoute
+  '/demo/jobb/$id': typeof DemoJobbIdRoute
   '/api/public/jobs/collect': typeof ApiPublicJobsCollectRoute
 }
 export interface FileRoutesById {
@@ -113,14 +152,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/demo': typeof DemoRoute
+  '/demo': typeof DemoRouteWithChildren
   '/watching': typeof WatchingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/my-jobs': typeof AuthenticatedMyJobsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/companies/$slug': typeof CompaniesSlugRoute
+  '/demo/foretag': typeof DemoForetagRoute
+  '/demo/student': typeof DemoStudentRoute
+  '/demo/studenter': typeof DemoStudenterRoute
   '/jobs/$id': typeof JobsIdRoute
+  '/demo/': typeof DemoIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/demo/jobb/$id': typeof DemoJobbIdRoute
   '/api/public/jobs/collect': typeof ApiPublicJobsCollectRoute
 }
 export interface FileRouteTypes {
@@ -134,21 +178,30 @@ export interface FileRouteTypes {
     | '/my-jobs'
     | '/onboarding'
     | '/companies/$slug'
+    | '/demo/foretag'
+    | '/demo/student'
+    | '/demo/studenter'
     | '/jobs/$id'
+    | '/demo/'
     | '/jobs/'
+    | '/demo/jobb/$id'
     | '/api/public/jobs/collect'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/demo'
     | '/watching'
     | '/admin'
     | '/my-jobs'
     | '/onboarding'
     | '/companies/$slug'
+    | '/demo/foretag'
+    | '/demo/student'
+    | '/demo/studenter'
     | '/jobs/$id'
+    | '/demo'
     | '/jobs'
+    | '/demo/jobb/$id'
     | '/api/public/jobs/collect'
   id:
     | '__root__'
@@ -161,8 +214,13 @@ export interface FileRouteTypes {
     | '/_authenticated/my-jobs'
     | '/_authenticated/onboarding'
     | '/companies/$slug'
+    | '/demo/foretag'
+    | '/demo/student'
+    | '/demo/studenter'
     | '/jobs/$id'
+    | '/demo/'
     | '/jobs/'
+    | '/demo/jobb/$id'
     | '/api/public/jobs/collect'
   fileRoutesById: FileRoutesById
 }
@@ -170,7 +228,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  DemoRoute: typeof DemoRoute
+  DemoRoute: typeof DemoRouteWithChildren
   WatchingRoute: typeof WatchingRoute
   CompaniesSlugRoute: typeof CompaniesSlugRoute
   JobsIdRoute: typeof JobsIdRoute
@@ -243,6 +301,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/': {
+      id: '/demo/'
+      path: '/'
+      fullPath: '/demo/'
+      preLoaderRoute: typeof DemoIndexRouteImport
+      parentRoute: typeof DemoRoute
+    }
+    '/demo/foretag': {
+      id: '/demo/foretag'
+      path: '/foretag'
+      fullPath: '/demo/foretag'
+      preLoaderRoute: typeof DemoForetagRouteImport
+      parentRoute: typeof DemoRoute
+    }
+    '/demo/student': {
+      id: '/demo/student'
+      path: '/student'
+      fullPath: '/demo/student'
+      preLoaderRoute: typeof DemoStudentRouteImport
+      parentRoute: typeof DemoRoute
+    }
+    '/demo/studenter': {
+      id: '/demo/studenter'
+      path: '/studenter'
+      fullPath: '/demo/studenter'
+      preLoaderRoute: typeof DemoStudenterRouteImport
+      parentRoute: typeof DemoRoute
+    }
     '/jobs/': {
       id: '/jobs/'
       path: '/jobs'
@@ -256,6 +342,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/jobs/$id'
       preLoaderRoute: typeof JobsIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/demo/jobb/$id': {
+      id: '/demo/jobb/$id'
+      path: '/jobb/$id'
+      fullPath: '/demo/jobb/$id'
+      preLoaderRoute: typeof DemoJobbIdRouteImport
+      parentRoute: typeof DemoRoute
     }
     '/api/public/jobs/collect': {
       id: '/api/public/jobs/collect'
@@ -282,11 +375,29 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface DemoRouteChildren {
+  DemoForetagRoute: typeof DemoForetagRoute
+  DemoStudentRoute: typeof DemoStudentRoute
+  DemoStudenterRoute: typeof DemoStudenterRoute
+  DemoIndexRoute: typeof DemoIndexRoute
+  DemoJobbIdRoute: typeof DemoJobbIdRoute
+}
+
+const DemoRouteChildren: DemoRouteChildren = {
+  DemoForetagRoute: DemoForetagRoute,
+  DemoStudentRoute: DemoStudentRoute,
+  DemoStudenterRoute: DemoStudenterRoute,
+  DemoIndexRoute: DemoIndexRoute,
+  DemoJobbIdRoute: DemoJobbIdRoute,
+}
+
+const DemoRouteWithChildren = DemoRoute._addFileChildren(DemoRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  DemoRoute: DemoRoute,
+  DemoRoute: DemoRouteWithChildren,
   WatchingRoute: WatchingRoute,
   CompaniesSlugRoute: CompaniesSlugRoute,
   JobsIdRoute: JobsIdRoute,

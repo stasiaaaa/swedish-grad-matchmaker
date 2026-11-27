@@ -132,6 +132,10 @@ function AuthPage() {
           <div className="space-y-1.5"><Label htmlFor="pw">Password</Label><Input id="pw" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
           <Button type="submit" className="w-full" size="lg" disabled={busy}>{busy ? "Please wait…" : mode === "signup" ? "Create profile" : "Sign in"}</Button>
         </form>
+        <div className="mt-5 grid grid-cols-2 gap-2 border-t border-border pt-5">
+          <Button asChild variant="secondary" size="sm"><Link to="/demo/foretag">Öppna företagsdemo</Link></Button>
+          <Button asChild variant="secondary" size="sm"><Link to="/demo/student">Öppna studentdemo</Link></Button>
+        </div>
         <p className="mt-5 text-center text-sm text-muted-foreground">
           {mode === "signup" ? "Already have an account?" : "New to LaunchPad?"}{" "}
           <button type="button" className="font-semibold text-primary" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
